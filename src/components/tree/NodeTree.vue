@@ -3,7 +3,7 @@
     <article 
       contenteditable="true"
       @dblclick="createNode"
-      @keyup.alt.67="removeSelf"
+      @keyup.shift.delete="removeSelf"
     >
       {{ node.label }}
     </article>
@@ -32,7 +32,7 @@ export default {
       });
     },
     removeSelf: function(args) {                 
-      this.$emit('deleteNode');
+      this.$emit('delete-node');
     },
     deleteChildNode: function(index) {
       if(this.node.children.length > index) {
