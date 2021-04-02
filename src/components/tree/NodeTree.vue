@@ -1,8 +1,7 @@
 <template>
   <li>
     <article 
-      contenteditable="true"
-      @contextmenu.prevent="removeSelf"
+      contenteditable="true"      
       @click="createNode"
       @keyup.shift.delete="removeSelf"
     >
