@@ -70,10 +70,12 @@ export default {
 
     &:first-of-type:after {
       top: 50%;
+      height: calc(100% / 2 + 16px);
     }
 
     &:last-of-type:after {
       bottom: 50%;
+      height: calc(100% / 2 + 16px);
     }
     
     ul {
