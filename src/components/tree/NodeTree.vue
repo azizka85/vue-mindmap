@@ -1,8 +1,8 @@
 <template>
   <li>
     <article 
-      :contenteditable="editable"
-      @contextmenu.prevent="changeEditable"
+      contenteditable="true"
+      @contextmenu.prevent="removeSelf"
       @click="createNode"
       @keyup.shift.delete="removeSelf"
     >
@@ -23,16 +23,12 @@
 export default {
   name: 'NodeTree',
   data: () => ({
-    editable: true,
     numClicks: 0
   }),
   props: {
     node: Object
   },
   methods: {
-    changeEditable: function() {
-      this.editable = !this.editable;
-    },
     createNode: function() {
       this.numClicks++;
       setTimeout(() => {
@@ -45,7 +41,7 @@ export default {
         this.numClicks = 0;
       }, 300);
     },
-    removeSelf: function(args) {                 
+    removeSelf: function() {    
       this.$emit('delete-node');
     },
     deleteChildNode: function(index) {
