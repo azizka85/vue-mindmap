@@ -1,7 +1,6 @@
 <template>
   <li>
-    <article 
-      contenteditable="true"
+    <article       
       @dblclick="createNode"
       @keyup.shift.delete="removeSelf"
     >

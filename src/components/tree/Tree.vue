@@ -63,7 +63,7 @@ export default {
       border-top: none;
       border-left: none;
       width: 0px;
-      height: calc(100% / 2 + 16px);
+      height: calc(100% + 16px);
       position: absolute;
       left: calc(-16px - 2px);
     }
