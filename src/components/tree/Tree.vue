@@ -73,6 +73,10 @@ export default {
       height: calc(100% / 2 + 16px);
     }
 
+    &:first-of-type:nth-last-child(1):after {
+      height: 0;
+    }
+
     &:last-of-type:after {
       bottom: 50%;
       height: calc(100% / 2 + 16px);

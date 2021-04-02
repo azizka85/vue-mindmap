@@ -1,7 +1,9 @@
 <template>
   <li>
-    <article       
-      @dblclick="createNode"
+    <article 
+      :contenteditable="editable"
+      @contextmenu.prevent="changeEditable"
+      @click="createNode"
       @keyup.shift.delete="removeSelf"
     >
       {{ node.label }}
@@ -20,15 +22,28 @@
 <script>
 export default {
   name: 'NodeTree',
+  data: () => ({
+    editable: true,
+    numClicks: 0
+  }),
   props: {
     node: Object
   },
   methods: {
-    createNode: function(args) {
-      this.node.children.push({
-        label: 'New node',
-        children: []          
-      });
+    changeEditable: function() {
+      this.editable = !this.editable;
+    },
+    createNode: function() {
+      this.numClicks++;
+      setTimeout(() => {
+        if(this.numClicks > 1) {
+          this.node.children.push({
+            label: 'New node',
+            children: []          
+          });
+        }
+        this.numClicks = 0;
+      }, 300);
     },
     removeSelf: function(args) {                 
       this.$emit('delete-node');
