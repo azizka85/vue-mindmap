@@ -2,7 +2,7 @@
   <ul class="mindmap">
     <node-tree 
       v-for="(nodeData, index) in treeData"
-      :key="nodeData.id"
+      :key="nodeData.key"
       :node="nodeData"
       :tabIndex="index"
       :root="true"
@@ -24,13 +24,24 @@ export default {
   },
   methods: {
     deleteChildNode: function(index) {
-      if(this.treeData.length > 1 && this.treeData.length > index) {
+      if(this.treeData.length > 1) {
         this.treeData.splice(index, 1);
-      }
+
+        let focusIndex = this.treeData.length - 1;
+
+        if(this.treeData.length > index) {
+          focusIndex = index;
+        }
+
+        if(focusIndex >= 0) {
+          this.treeData[focusIndex].active = true;
+          this.treeData[focusIndex].key = Date.now();                
+        }        
+      }         
     },
     createChildNode: function() {
       this.treeData.push({
-        id: Date.now(),
+        key: Date.now(),
         label: '',
         active: true,
         editable: true,
@@ -44,7 +55,7 @@ export default {
       }
 
       this.treeData[index].active = true;
-      this.treeData[index].id = Date.now();         
+      this.treeData[index].key = Date.now();         
     },
     focusChildDownNode: function(childIndex) {
       let index = this.treeData.length - 1;
@@ -53,7 +64,7 @@ export default {
       }
 
       this.treeData[index].active = true;
-      this.treeData[index].id = Date.now();  
+      this.treeData[index].key = Date.now();  
     }            
   },
   components: { NodeTree }

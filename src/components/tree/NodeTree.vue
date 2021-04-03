@@ -20,7 +20,7 @@
     <ul v-if="node.children && node.children.length">
       <node-tree 
         v-for="(child, index) in node.children"
-        :key="child.id"
+        :key="child.key"
         :node="child"
         :tabIndex="index"
         :root="false"
@@ -109,7 +109,7 @@ export default {
           const index = Math.floor((this.node.children.length - 1) / 2);
 
           this.node.children[index].active = true;
-          this.node.children[index].id = Date.now();
+          this.node.children[index].key = Date.now();
         }
       }      
     },
@@ -140,7 +140,7 @@ export default {
       }
 
       this.node.children[index].active = true;
-      this.node.children[index].id = Date.now();         
+      this.node.children[index].key = Date.now();         
     },
     focusChildDownNode: function(childIndex) {
       let index = this.node.children.length - 1;
@@ -149,11 +149,11 @@ export default {
       }
 
       this.node.children[index].active = true;
-      this.node.children[index].id = Date.now();  
+      this.node.children[index].key = Date.now();  
     },
     createChildNode: function() {
       this.node.children.push({
-        id: Date.now(),
+        key: Date.now(),
         label: '',
         active: true,
         editable: true,
@@ -164,8 +164,19 @@ export default {
       this.$emit('delete-node');
     },
     deleteChildNode: function(index) {
+      this.node.children.splice(index, 1);
+
+      let focusIndex = this.node.children.length - 1;
+
       if(this.node.children.length > index) {
-        this.node.children.splice(index, 1);
+        focusIndex = index;
+      }
+
+      if(focusIndex >= 0) {
+        this.node.children[focusIndex].active = true;
+        this.node.children[focusIndex].key = Date.now();                
+      } else {
+        this.focusNode();
       }
     }
   }

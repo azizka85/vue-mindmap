@@ -10,7 +10,7 @@ export default {
   name: 'App',
   data: () => ({
     tree: [{
-      id: Date.now(),
+      key: Date.now(),
       label: 'Press Space or double click to edit',
       active: false,
       editable: false,
