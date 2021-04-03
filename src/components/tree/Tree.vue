@@ -1,8 +1,16 @@
 <template>
   <ul class="mindmap">
     <node-tree 
-      :node="treeData"
-    ></node-tree>
+      v-for="(nodeData, index) in treeData"
+      :key="nodeData.id"
+      :node="nodeData"
+      :tabIndex="index"
+      :root="true"
+      @delete-node="deleteChildNode(index)"
+      @create-node="createChildNode"
+      @focus-child-up-node="focusChildUpNode(index)"
+      @focus-child-down-node="focusChildDownNode(index)"
+    />
   </ul>  
 </template>
 
@@ -12,7 +20,41 @@ import NodeTree from './NodeTree.vue';
 export default {
   name: 'Tree',
   props: {
-    treeData: Object
+    treeData: Array
+  },
+  methods: {
+    deleteChildNode: function(index) {
+      if(this.treeData.length > 1 && this.treeData.length > index) {
+        this.treeData.splice(index, 1);
+      }
+    },
+    createChildNode: function() {
+      this.treeData.push({
+        id: Date.now(),
+        label: '',
+        active: true,
+        editable: true,
+        children: []          
+      });            
+    },
+    focusChildUpNode: function(childIndex) {
+      let index = 0;
+      if(childIndex > 0) {        
+        index = childIndex - 1;              
+      }
+
+      this.treeData[index].active = true;
+      this.treeData[index].id = Date.now();         
+    },
+    focusChildDownNode: function(childIndex) {
+      let index = this.treeData.length - 1;
+      if(childIndex < this.treeData.length - 1) {        
+        index = childIndex + 1;              
+      }
+
+      this.treeData[index].active = true;
+      this.treeData[index].id = Date.now();  
+    }            
   },
   components: { NodeTree }
 }
@@ -23,7 +65,12 @@ export default {
   article {
     padding: 8px;
     border: 1px solid black;
-  }
+
+    &:focus {
+      outline: 3px dashed orange;
+      border: none;
+    }
+  }  
   li {
     list-style: none;
     display: flex;

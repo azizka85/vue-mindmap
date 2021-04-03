@@ -9,10 +9,13 @@ export default {
   components: { Tree },
   name: 'App',
   data: () => ({
-    tree: {
-      label: 'Food',
+    tree: [{
+      id: Date.now(),
+      label: 'Press Space or double click to edit',
+      active: false,
+      editable: false,
       children: []      
-    }
+    }]
   })
 }
 </script>
