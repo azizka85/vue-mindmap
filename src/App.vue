@@ -14,6 +14,7 @@ export default {
       label: 'Press Space or double click to edit',
       active: false,
       editable: false,
+      collapsed: false,
       children: []      
     }]
   })

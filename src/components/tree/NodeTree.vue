@@ -2,6 +2,7 @@
   <li>
     <article 
       ref="article"
+      :class="{collapsed: node.collapsed}"
       :tabindex="tabIndex"
       :contenteditable="contentEditable"  
       @click="onNodeClicked"
@@ -15,9 +16,11 @@
       @keydown.right="onNodeRightPressed"
       @keydown.up="onNodeUpPressed"   
       @keydown.down="onNodeDownPressed"
+      @keydown.70.exact="toggleCollapse"
+      @keydown.shift.70="childrenToggleCollapse"
       v-html="node.label" 
     />
-    <ul v-if="node.children && node.children.length">
+    <ul v-if="!node.collapsed && node.children && node.children.length">
       <node-tree 
         v-for="(child, index) in node.children"
         :key="child.key"
@@ -151,14 +154,16 @@ export default {
       this.node.children[index].active = true;
       this.node.children[index].key = Date.now();  
     },
-    createChildNode: function() {
+    createChildNode: function() {      
       this.node.children.push({
         key: Date.now(),
         label: '',
         active: true,
         editable: true,
+        collapsed: false,
         children: []          
       });
+      this.node.collapsed = false;
     },
     removeSelf: function() {    
       this.$emit('delete-node');
@@ -177,7 +182,23 @@ export default {
         this.node.children[focusIndex].key = Date.now();                
       } else {
         this.focusNode();
+        this.node.collapsed = false;
       }
+    },
+    toggleCollapse: function() {
+      if(this.node.children.length > 0) {
+        this.node.collapsed = !this.node.collapsed;
+      }
+    },
+    childrenToggleCollapse: function() {
+      for(let child of this.node.children) {
+        if(child.children.length > 0) {
+          child.collapsed = !child.collapsed;
+          child.key = Date.now();
+        }
+      }
+      
+      this.node.collapsed = false;
     }
   }
 }

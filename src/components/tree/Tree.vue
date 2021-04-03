@@ -1,7 +1,7 @@
 <template>
   <ul class="mindmap">
     <node-tree 
-      v-for="(nodeData, index) in treeData"
+      v-for="(nodeData, index) in treeData"      
       :key="nodeData.key"
       :node="nodeData"
       :tabIndex="index"
@@ -45,6 +45,7 @@ export default {
         label: '',
         active: true,
         editable: true,
+        collapsed: false,
         children: []          
       });            
     },
@@ -76,10 +77,15 @@ export default {
   article {
     padding: 8px;
     border: 1px solid black;
+    border-radius: 10px;
+    outline: none;
 
     &:focus {
-      outline: 3px dashed orange;
-      border: none;
+      border: 3px dashed orange;
+    }
+
+    &.collapsed {
+      box-shadow: 0px 1px 0px #888888, 0px 3px 0px #ffffff, 0px 4px 0px #888888, 0px 6px 0px #ffffff, 0px 7px 0px #888888;
     }
   }  
   li {
