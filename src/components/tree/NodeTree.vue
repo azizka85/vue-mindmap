@@ -39,8 +39,7 @@ export default {
   name: 'NodeTree',
   data: () => ({
     numClicks: 0,
-    contentEditable: true,
-    firstTime: true
+    contentEditable: true
   }),
   props: {
     node: Object,
@@ -59,10 +58,7 @@ export default {
     }
 
     setTimeout(() => {
-      if(this.firstTime) {
-        this.$refs.article.innerHTML = this.node.label;
-        this.firstTime = false;
-      }
+      this.$refs.article.innerHTML = this.node.label;
     });
   },
   methods: {
