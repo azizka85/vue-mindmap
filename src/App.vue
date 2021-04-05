@@ -1,22 +1,12 @@
 <template>
-  <tree :treeData="tree"></tree>
+  <tree></tree>
 </template>
 
 <script>
 import Tree from './components/tree/Tree.vue';
 
-export default {
-  components: { Tree },
+export default {  
   name: 'App',
-  data: () => ({
-    tree: [{
-      key: Date.now(),
-      label: 'Press Space or double click to edit',
-      active: false,
-      editable: false,
-      collapsed: false,
-      children: []      
-    }]
-  })
+  components: { Tree }
 }
 </script>

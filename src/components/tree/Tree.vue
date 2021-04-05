@@ -1,74 +1,27 @@
 <template>
   <ul class="mindmap">
     <node-tree 
-      v-for="(nodeData, index) in treeData"      
-      :key="nodeData.key"
-      :node="nodeData"
+      v-for="(node, index) in root.children"      
+      :key="node.id"
+      :node="node"
       :tabIndex="index"
-      :root="true"
-      @delete-node="deleteChildNode(index)"
-      @create-node="createChildNode"
-      @focus-child-up-node="focusChildUpNode(index)"
-      @focus-child-down-node="focusChildDownNode(index)"
+      :parent="root"
     />
   </ul>  
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import NodeTree from './NodeTree.vue';
 
 export default {
   name: 'Tree',
-  props: {
-    treeData: Array
-  },
-  methods: {
-    deleteChildNode: function(index) {
-      if(this.treeData.length > 1) {
-        this.treeData.splice(index, 1);
-
-        let focusIndex = this.treeData.length - 1;
-
-        if(this.treeData.length > index) {
-          focusIndex = index;
-        }
-
-        if(focusIndex >= 0) {
-          this.treeData[focusIndex].active = true;
-          this.treeData[focusIndex].key = Date.now();                
-        }        
-      }         
-    },
-    createChildNode: function() {
-      this.treeData.push({
-        key: Date.now(),
-        label: '',
-        active: true,
-        editable: true,
-        collapsed: false,
-        children: []          
-      });            
-    },
-    focusChildUpNode: function(childIndex) {
-      let index = 0;
-      if(childIndex > 0) {        
-        index = childIndex - 1;              
-      }
-
-      this.treeData[index].active = true;
-      this.treeData[index].key = Date.now();         
-    },
-    focusChildDownNode: function(childIndex) {
-      let index = this.treeData.length - 1;
-      if(childIndex < this.treeData.length - 1) {        
-        index = childIndex + 1;              
-      }
-
-      this.treeData[index].active = true;
-      this.treeData[index].key = Date.now();  
-    }            
-  },
-  components: { NodeTree }
+  components: { NodeTree },
+  computed: {
+    ...mapGetters([
+      'root'
+    ])
+  }
 }
 </script>
 
