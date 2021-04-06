@@ -1,25 +1,41 @@
 <template>
-  <ul class="mindmap">
-    <node-tree 
+  <ul class="mindmap" @click="disposeActiveNode">
+    <node 
       v-for="(node, index) in root.children"      
       :key="node.id"
       :node="node"
       :tabIndex="index"
-      :parent="root"
     />
   </ul>  
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import NodeTree from './NodeTree.vue';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
+import Node from './Node.vue';
 
 export default {
-  name: 'Tree',
-  components: { NodeTree },
+  name: 'MindMap',
+  components: { Node },
   computed: {
     ...mapGetters([
       'root'
+    ])
+  },
+  created: function() {
+    this.addParent({
+      node: this.root.children[0], 
+      parent: this.root
+    });
+  },
+  methods: {
+    disposeActiveNode() {
+      this.setActiveNode(null);
+    },
+    ...mapActions([
+      'setActiveNode'
+    ]),
+    ...mapMutations([
+      'addParent'
     ])
   }
 }
@@ -27,13 +43,18 @@ export default {
 
 <style lang="scss">
 .mindmap {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+
   article {
     padding: 8px;
     border: 1px solid black;
     border-radius: 10px;
     outline: none;
 
-    &:focus {
+    &.active {
       border: 3px dashed orange;
     }
 

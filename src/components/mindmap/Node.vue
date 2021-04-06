@@ -2,13 +2,11 @@
   <li>
     <article 
       ref="article"
-      :class="{collapsed: node.collapsed}"
+      :class="{collapsed: node.collapsed, active: node.active}"
       :tabindex="tabIndex"
       :contenteditable="node.editable"  
-      @focus="onNodeFocus"
-      @blur="onNodeBlur"
       @input="onNodeInput"
-      @click="onNodeClicked"      
+      @click.stop="onNodeClicked"      
       @keydown.space="onNodeSpacePressed"
       @keydown.tab.prevent="onNodeTabPressed"
       @keydown.enter.prevent="onNodeEnterPressed"
@@ -20,31 +18,30 @@
       @keydown.68.exact="onNodeDPressed"
       @keydown.shift.68="onNodeShiftDPressed"        
     />
+    
     <ul v-if="!node.collapsed && node.children && node.children.length">
-      <node-tree 
+      <node 
         v-for="(child, index) in node.children"
         :key="child.id"
         :node="child"
         :tabIndex="index"
-        :parent="node"
       />
     </ul>
   </li>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  name: 'NodeTree',
+  name: 'Node',
   data: () => ({
     numClicks: 0,
     childrenCollapsed: false
   }),  
   props: {
     node: Object,
-    tabIndex: Number,
-    parent: Object
+    tabIndex: Number
   },
   computed: {
     label() {
@@ -52,7 +49,10 @@ export default {
     },
     active() {
       return this.node.active;
-    }
+    },
+    ...mapGetters([
+      'parent'
+    ])
   },
   watch: {
     label(newLabel) {
@@ -67,22 +67,6 @@ export default {
     this.updateArticleFocus(this.active);
   },
   methods: {
-    onNodeFocus: function() {
-      if(!this.node.active) {
-        this.setNodeActive({
-          node: this.node,
-          active: true
-        });        
-      }
-    },
-    onNodeBlur: function() {
-      if(this.node.active) {
-        this.setNodeActive({
-          node: this.node,
-          active: false
-        });        
-      }
-    },
     onNodeInput: function() {
       this.setNodeLabel({
         node: this.node,
@@ -91,6 +75,10 @@ export default {
     },
     onNodeClicked: function() {
       this.numClicks++;
+
+      if(!this.node.active) {
+        this.setActiveNode(this.node);
+      }
 
       setTimeout(() => {
         if(this.numClicks > 1 && !this.node.editable) {
@@ -113,11 +101,11 @@ export default {
       }
     },  
     onNodeTabPressed: function() {
-      this.addNewNode(this.node);
+      this.createChildNode(this.node);
     },  
     onNodeEnterPressed: function() {
       if(!this.node.editable) {
-        this.addNewNode(this.parent);       
+        this.createChildNode(this.parent(this.node));       
       } else {
         this.setNodeEditable({
           node: this.node,
@@ -127,36 +115,24 @@ export default {
     },
     onNodeDelPressed: function() {
       if(!this.node.editable) {
-        this.removeNode({
-          parent: this.parent,
-          node: this.node
-        });        
+        this.removeNode(this.node);        
       }
     },
     onNodeLeftPressed: function() {
       if(!this.node.editable) {
-        this.moveNodeToLeft({
-          node: this.node,
-          parent: this.parent
-        });
+        this.moveNodeToLeft();
       }
     },
     onNodeRightPressed: function() {
       if(!this.node.editable) {        
-        this.moveNodeToRight(this.node);
+        this.moveNodeToRight();
       }      
     },
     onNodeUpPressed: function() {
-      this.moveNodeToUp({
-        node: this.node,
-        parent: this.parent
-      });          
+      this.moveNodeToUp();          
     },
     onNodeDownPressed: function() {
-      this.moveNodeToDown({
-        node: this.node,
-        parent: this.parent
-      });          
+      this.moveNodeToDown();          
     },
     onNodeDPressed: function() {
       if(!this.node.editable) {
@@ -183,19 +159,6 @@ export default {
         });        
       }
     },    
-    addNewNode(parent) {
-      this.createChildNode({
-        parent,
-        newNode: {
-          id: Date.now(),
-          label: '',
-          active: true,
-          editable: true,
-          collapsed: false,
-          children: []          
-        }
-      });
-    },    
     updateArticleContent(content) {
       this.$refs.article.textContent = content;
     },
@@ -207,8 +170,8 @@ export default {
       }
     },    
     ...mapActions([
-      'setNodeLabel',
-      'setNodeActive',      
+      'setActiveNode',
+      'setNodeLabel',      
       'setNodeEditable',
       'setNodeCollapsed',
       'setChildNodesCollapsed',
